@@ -42,6 +42,6 @@ public class Product {
         this.price = price;
     }
     public void setCategory(String category){
-        this.name = category;
+        this.category = category;
     }
 }

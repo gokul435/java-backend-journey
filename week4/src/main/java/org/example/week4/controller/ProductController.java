@@ -57,5 +57,29 @@ public class ProductController {
         return "Product not found";
     }
 
+    @GetMapping("/products/search")
+    public List<Product> searchProduct(@RequestParam String name){
 
+        List<Product> result = new ArrayList<>();
+        for(Product product: products){
+            if(product.getName().toLowerCase().contains(name.toLowerCase())){
+               result.add(product);
+            }
+        }
+        return result;
+    }
+
+    @PutMapping("/products/{id}")
+    public Product updateProduct(@PathVariable Integer id, @RequestBody Product updateProduct){
+        for(Product product : products){
+            if(product.getId().equals(id)){
+                product.setName(updateProduct.getName());
+                product.setPrice(updateProduct.getPrice());
+                product.setCategory(updateProduct.getCategory());
+
+                return product;
+            }
+        }
+        return null;
+    }
 }
