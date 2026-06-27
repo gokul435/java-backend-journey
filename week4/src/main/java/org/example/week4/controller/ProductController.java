@@ -1,6 +1,8 @@
 package org.example.week4.controller;
 
 import org.example.week4.model.Product;
+import org.example.week4.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,14 +12,9 @@ import java.util.List;
 @RequestMapping("/api")
 public class ProductController {
 
-    private List<Product> products = new ArrayList<>();
-    private Integer nextId = 1;
+    @Autowired
+    ProductService productService;
 
-    public ProductController(){
-        products.add(new Product(nextId++, "POCO", 99.0, "Mobile phone"));
-        products.add(new Product(nextId++, "Honor", 99.0, "Mobile phone"));
-        products.add(new Product(nextId++, "Redmi", 99.0, "Mobile phone"));
-    }
 
     @GetMapping("/hello")
     public String hello(){
@@ -26,60 +23,31 @@ public class ProductController {
 
     @GetMapping("/products")
         public List<Product> allProducts(){
-         return products;
+         return productService.allProducts();
         }
 
     @GetMapping("/products/{id}")
         public Product getProductById(@PathVariable Integer id){
-        for(Product product:products) {
-            if (product.getId() == id) {
-                return product;
-            }
-        }
-        return null;
+        return productService.getProductById(id);
     }
 
     @PostMapping("/products")
     public Product addProduct(@RequestBody Product product){
-        product.setId(nextId++);
-        products.add(product);
-        return product;
+        return productService.addProduct(product);
     }
 
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable Integer id){
-        for(Product product: products){
-            if(product.getId()==id){
-                products.remove(product);
-                return "Product " + id +" removed ";
-            }
-        }
-        return "Product not found";
+        return productService.deleteProduct(id);
     }
 
     @GetMapping("/products/search")
     public List<Product> searchProduct(@RequestParam String name){
-
-        List<Product> result = new ArrayList<>();
-        for(Product product: products){
-            if(product.getName().toLowerCase().contains(name.toLowerCase())){
-               result.add(product);
-            }
-        }
-        return result;
+        return productService.searchProduct(name);
     }
 
     @PutMapping("/products/{id}")
     public Product updateProduct(@PathVariable Integer id, @RequestBody Product updateProduct){
-        for(Product product : products){
-            if(product.getId().equals(id)){
-                product.setName(updateProduct.getName());
-                product.setPrice(updateProduct.getPrice());
-                product.setCategory(updateProduct.getCategory());
-
-                return product;
-            }
-        }
-        return null;
+        return productService.updateProduct(id, updateProduct);
     }
 }
