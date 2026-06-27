@@ -1,12 +1,11 @@
 package org.example.week4.repository;
 import org.example.week4.model.Product;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductRepository {
@@ -27,26 +26,26 @@ public class ProductRepository {
     }
 
     //get Product by ID
-    public Product findById(@PathVariable Integer id){
+    public Optional<Product> findById(Integer id){
         for(Product product:products) {
-            if (product.getId() == id) {
-                return product;
+            if (product.getId().equals(id)) {
+                return Optional.of(product);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     //add product
-    public Product save(@RequestBody Product product){
+    public Product save( Product product){
         product.setId(nextId++);
         products.add(product);
         return product;
     }
 
     //delete product by ID
-    public String delete(@PathVariable Integer id){
+    public String delete( Integer id){
         for(Product product: products){
-            if(product.getId()==id){
+            if(product.getId().equals(id)){
                 products.remove(product);
                 return "Product " + id +" removed ";
             }
@@ -55,7 +54,7 @@ public class ProductRepository {
     }
 
     //Search product by name
-    public List<Product> findByName(@RequestParam String name){
+    public List<Product> findByName( String name){
 
         List<Product> result = new ArrayList<>();
         for(Product product: products){
@@ -67,7 +66,7 @@ public class ProductRepository {
     }
 
     //update existing product
-    public Product update(@PathVariable Integer id, @RequestBody Product updateProduct){
+    public Product update( Integer id, Product updateProduct){
         for(Product product : products){
             if(product.getId().equals(id)){
                 product.setName(updateProduct.getName());
