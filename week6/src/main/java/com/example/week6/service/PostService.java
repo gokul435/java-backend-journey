@@ -1,6 +1,7 @@
 package com.example.week6.service;
 import com.example.week6.dto.PostRequestDTO;
 import com.example.week6.dto.PostResponseDTO;
+import com.example.week6.exception.PostNotFoundException;
 import com.example.week6.model.Post;
 import com.example.week6.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +51,12 @@ public class PostService {
     }
 
     public PostResponseDTO getPostById(Long id){
-        Post post = postRepo.findById(id).orElseThrow(()->new RuntimeException("Post not found with id; "+ id));
+        Post post = postRepo.findById(id).orElseThrow(()->new PostNotFoundException("Post not found with id; "+ id));
         return toResponseDto(post);
     }
 
     public PostResponseDTO updatePost(Long id, PostRequestDTO dto){
-        Post post = postRepo.findById(id).orElseThrow(()-> new RuntimeException("Post not found with id; "+ id));
+        Post post = postRepo.findById(id).orElseThrow(()-> new PostNotFoundException("Post not found with id; "+ id));
 
             post.setTitle(dto.getTitle());
             post.setContent(dto.getContent());
@@ -67,7 +68,7 @@ public class PostService {
     public void deletePost(Long id){
 
         if(!postRepo.existsById(id)){
-            throw new RuntimeException("Post not found with id; "+ id);
+            throw new PostNotFoundException("Post not found with id; "+ id);
         }
         postRepo.deleteById(id);
     }
