@@ -5,8 +5,14 @@ import com.example.week6.exception.PostNotFoundException;
 import com.example.week6.model.Post;
 import com.example.week6.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,15 +24,15 @@ public class PostService {
     PostRepository postRepo;
 
     private PostResponseDTO toResponseDto(Post post){
-        PostResponseDTO dto = new PostResponseDTO();
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setContent(post.getContent());
-        dto.setAuthor(post.getAuthor());
-        dto.setCreatedAt(post.getCreatedAt());
-        dto.setUpdatedAt(post.getUpdatedAt());
 
-        return dto;
+        return PostResponseDTO.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .author(post.getAuthor())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
     }
 
     private Post toEntity(PostRequestDTO dto){
@@ -45,9 +51,14 @@ public class PostService {
         return toResponseDto(saved);
     }
 
-    public List<PostResponseDTO> findAllPosts(){
-        List<Post> posts = postRepo.findAll();
-        return posts.stream().map(this::toResponseDto).collect(Collectors.toList());
+//    public List<PostResponseDTO> findAllPosts(){
+//        List<Post> posts = postRepo.findAll();
+//        return posts.stream().map(this::toResponseDto).collect(Collectors.toList());
+//    }
+//
+    public Page<PostResponseDTO> findAllPosts(int page, int size, String sortBy){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        return postRepo.findAll(pageable).map(this::toResponseDto);
     }
 
     public PostResponseDTO getPostById(Long id){

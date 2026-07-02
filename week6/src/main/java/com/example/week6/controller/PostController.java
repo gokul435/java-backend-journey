@@ -6,6 +6,7 @@ import com.example.week6.dto.PostResponseDTO;
 import com.example.week6.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,12 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<PostResponseDTO>> getAllPosts(){
-        return ResponseEntity.ok(postService.findAllPosts());
+    public ResponseEntity<Page<PostResponseDTO>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy)
+    {
+        return ResponseEntity.ok(postService.findAllPosts(page, size, sortBy));
     }
 
     @GetMapping("/{id}")
